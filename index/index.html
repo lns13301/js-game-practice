@@ -18,6 +18,7 @@
 
     var x = canvas.width / 2;
     var y = canvas.height - 30;
+    var ballRadius = 10;
 
     var dx = 2;
     var dy = -2;
@@ -38,43 +39,58 @@
     }
 
     function drawball() {
-        var ballRadius = 10;
-
-        if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-            dx = -dx;
-        }
-
-        if(y + dy > canvas.height - ballRadius || y + dy < ballRadius){
-            dy = -dy;
-        }
-
         ctx.beginPath();
         ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-        ctx.fillStyle = "#0095DD";
+        ctx.fillStyle = "#dd5267";
         ctx.fill();
         ctx.closePath();
     }
+
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawPaddle();
         drawball();
 
+        if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+            dx = -dx;
+        }
+
+        if(y + dy < ballRadius){
+            dy = -dy;
+        } else if(y + dy > canvas.height - ballRadius) {
+            if(x > paddleX && x < paddleX + paddleWidth) {
+                dy = -dy;
+            } else {
+                alert("GAME OVER");
+                document.location.reload();
+                clearInterval(interval);
+            }
+        }
+
+        if(paddleX < 0) {
+            paddleX += 5;
+        }
+        else if(paddleX + paddleWidth > canvas.width) {
+            paddleX -= 5;
+        }
+
         if(rightPressed) {
-            paddleX += 7;
+            paddleX += 5;
         }
         else if(leftPressed) {
-            paddleX -= 7;
+            paddleX -= 5;
         }
 
         if(rightPressed && paddleX < canvas.width-paddleWidth) {
-            paddleX += 7;
+            paddleX += 5;
         }
         else if(leftPressed && paddleX > 0) {
-            paddleX -= 7;
+            paddleX -= 5;
         }
 
         x += dx;
         y += dy;
+
     }
 
     document.addEventListener("keydown", keyDownHandler, false);
@@ -98,7 +114,7 @@
         }
     }
 
-    setInterval(draw, 10);
+    var interval = setInterval(draw, 10);
 </script>
 
 </body>
